@@ -10,8 +10,9 @@ own tests.
 |---|---|---|---|
 | [`java`](java) | Java 17 | [databucket-java-client](https://github.com/databucket/databucket-java-client) (Maven Central `pl.databucket:databucket-client`) | JUnit 5 |
 | [`python`](python) | Python 3.10+ | [databucket-python-client](https://github.com/databucket/databucket-python-client) (PyPI `databucket-client`) | pytest |
+| [`js`](js) | Node.js 20.19+, TypeScript | [databucket-js-client](https://github.com/databucket/databucket-js-client) (npm `databucket-client`) | Playwright Test |
 
-JavaScript / TypeScript follows, with the same scenarios.
+Every folder has the same scenarios.
 
 ## The scenarios
 
@@ -49,6 +50,11 @@ The examples use the DEMO dataset that comes with Databucket (project "Acme Shop
    python -m venv .venv && source .venv/bin/activate   # Windows: .venv\Scripts\activate
    pip install -r requirements.txt
    pytest
+   ```
+   ```shell
+   cd js
+   npm install
+   npm test
    ```
 
 Another Databucket, project or user: set `DATABUCKET_URL`, `DATABUCKET_PROJECT`, `DATABUCKET_USERNAME`,

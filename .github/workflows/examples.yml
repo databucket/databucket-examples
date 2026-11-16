@@ -44,6 +44,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
+          cache: npm
+          cache-dependency-path: js/package-lock.json
 
       - uses: actions/setup-java@v4
         with:
@@ -80,6 +82,14 @@ jobs:
         run: |
           pip install -r requirements.txt
           pytest
+
+      - name: JavaScript
+        if: ${{ !cancelled() }}
+        working-directory: js
+        run: |
+          npm ci
+          npm run typecheck
+          npm test
 
       - name: Logs of Databucket
         if: failure()
