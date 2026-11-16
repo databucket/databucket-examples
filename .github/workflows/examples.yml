@@ -1,0 +1,73 @@
+# Runs the examples against the latest release of Databucket: the docker compose of databucket-server (PostgreSQL,
+# Keycloak, Caddy) with a project of the DEMO dataset. Also weekly, so a new release of the server or of a client that
+# breaks an example shows up.
+name: Examples
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  schedule:
+    - cron: '0 5 * * 1'
+  workflow_dispatch:
+
+concurrency:
+  group: examples-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  examples:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Latest release of Databucket
+        id: release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: echo "tag=$(gh release view --repo databucket/databucket-server --json tagName --jq .tagName)" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/checkout@v4
+        with:
+          repository: databucket/databucket-server
+          ref: ${{ steps.release.outputs.tag }}
+          path: databucket-server
+
+      - name: Names of the compose
+        run: echo "127.0.0.1 databucket.localhost auth.localhost mail.localhost" | sudo tee -a /etc/hosts
+
+      - name: Start Databucket ${{ steps.release.outputs.tag }}
+        working-directory: databucket-server/docker
+        run: docker compose up -d --build
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+          cache: maven
+          cache-dependency-path: java/pom.xml
+
+      - name: Wait for Databucket
+        run: |
+          for i in $(seq 1 90); do
+            curl -sf http://databucket.localhost/api/public/projects > /dev/null && exit 0
+            sleep 5
+          done
+          docker compose -f databucket-server/docker/docker-compose.yaml logs databucket | tail -100
+          exit 1
+
+      - name: Project with the DEMO dataset
+        run: node scripts/setup-demo-project.mjs
+
+      - name: Java
+        working-directory: java
+        run: ./mvnw -B test
+
+      - name: Logs of Databucket
+        if: failure()
+        run: docker compose -f databucket-server/docker/docker-compose.yaml logs databucket | tail -300
