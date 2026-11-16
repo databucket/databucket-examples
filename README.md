@@ -9,8 +9,9 @@ own tests.
 | Folder | Language | Client | Test framework |
 |---|---|---|---|
 | [`java`](java) | Java 17 | [databucket-java-client](https://github.com/databucket/databucket-java-client) (Maven Central `pl.databucket:databucket-client`) | JUnit 5 |
+| [`python`](python) | Python 3.10+ | [databucket-python-client](https://github.com/databucket/databucket-python-client) (PyPI `databucket-client`) | pytest |
 
-Python and JavaScript / TypeScript follow, with the same scenarios.
+JavaScript / TypeScript follows, with the same scenarios.
 
 ## The scenarios
 
@@ -38,10 +39,16 @@ The examples use the DEMO dataset that comes with Databucket (project "Acme Shop
    ```shell
    node scripts/setup-demo-project.mjs
    ```
-3. Run the examples of a language, e.g.:
+3. Run the examples of a language:
    ```shell
    cd java
    ./mvnw test
+   ```
+   ```shell
+   cd python
+   python -m venv .venv && source .venv/bin/activate   # Windows: .venv\Scripts\activate
+   pip install -r requirements.txt
+   pytest
    ```
 
 Another Databucket, project or user: set `DATABUCKET_URL`, `DATABUCKET_PROJECT`, `DATABUCKET_USERNAME`,
