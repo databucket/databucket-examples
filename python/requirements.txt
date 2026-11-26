@@ -1,2 +1,2 @@
-databucket-client==2.0.0
+databucket-client==2.4.0
 pytest==9.2.0

@@ -13,7 +13,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.release>17</maven.compiler.release>
-        <databucket-client.version>2.0.0</databucket-client.version>
+        <databucket-client.version>2.4.0</databucket-client.version>
         <junit.version>5.11.4</junit.version>
     </properties>
 
